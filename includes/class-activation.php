@@ -20,7 +20,41 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class AffiliateWP_Activation {
 
-    public $plugin_name, $plugin_path, $plugin_file, $has_affiliatewp;
+	/**
+	 * Plugin name.
+	 *
+	 * @access public
+	 * @since  1.0.0
+	 * @var    string
+	 */
+    public $plugin_name;
+
+	/**
+	 * Plugin path.
+	 *
+	 * @access public
+	 * @since  1.0.0
+	 * @var    string
+	 */
+    public $plugin_path;
+
+	/**
+	 * Main plugin filename.
+	 *
+	 * @access public
+	 * @since  1.0.0
+	 * @var    string
+	 */
+    public $plugin_file;
+
+	/**
+	 * Whether AffiliateWP is installed.
+	 *
+	 * @access public
+	 * @since  1.0.0
+	 * @var    bool
+	 */
+    public $has_affiliatewp;
 
     /**
      * Sets up the activation class.
