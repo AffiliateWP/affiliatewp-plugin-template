@@ -45,10 +45,9 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 		 * TL;DR This is a static property property that holds the singleton instance.
 		 *
 		 * @access private
+		 * @since  1.0
 		 * @var    \AffiliateWP_Plugin_Template
 		 * @static
-		 *
-		 * @since 1.0
 		 */
 		private static $instance;
 
@@ -71,7 +70,7 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 		 * @since	1.0
 		 * @static
 		 *
-		 * @return \AffiliateWP_Plugin_Template The one true AffiliateWP_Plugin_Template.
+		 * @return \AffiliateWP_Plugin_Template The one true AffiliateWP_Plugin_Template instance.
 		 */
 		public static function instance() {
 			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof AffiliateWP_Plugin_Template ) ) {
@@ -104,7 +103,7 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 		}
 
 		/**
-		 * Disables unserializing of the class.
+		 * Disables unserialization of the class.
 		 *
 		 * @access protected
 		 * @since  1.0
@@ -138,7 +137,7 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 		}
 
 		/**
-		 * Setup plugin constants
+		 * Sets up plugin constants.
 		 *
 		 * @access private
 		 * @since  1.0
@@ -210,7 +209,7 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 		}
 
 		/**
-		 * Include necessary files.
+		 * Includes necessary files.
 		 *
 		 * @access private
 		 * @since  1.0
@@ -264,7 +263,7 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 
 	/**
 	 * The main function responsible for returning the one true AffiliateWP_Plugin_Template
-	 * Instance to functions everywhere.
+	 * instance to functions everywhere.
 	 *
 	 * Use this function like you would a global variable, except without needing
 	 * to declare the global.
@@ -273,7 +272,7 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 	 *
 	 * @since  1.0
 	 *
-	 * @return object The one true AffiliateWP_Plugin_Template Instance
+	 * @return \AffiliateWP_Plugin_Template The one true AffiliateWP_Plugin_Template instance.
 	 */
 	function affiliatewp_plugin_template() {
 	    if ( ! class_exists( 'Affiliate_WP' ) ) {
