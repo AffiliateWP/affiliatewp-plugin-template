@@ -33,6 +33,7 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 	 * Setup class.
 	 *
 	 * @since 1.0
+	 * @final
 	 */
 	final class AffiliateWP_Plugin_Template {
 
