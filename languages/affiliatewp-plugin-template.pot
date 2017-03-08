@@ -22,20 +22,20 @@ msgstr ""
 msgid "Cheatin&#8217; huh?"
 msgstr ""
 
-#: ../affiliatewp-plugin-template.php:255
+#: ../affiliatewp-plugin-template.php:261
 msgid "More add-ons"
 msgstr ""
 
-#: ../includes/class-activation.php:47
+#: ../includes/class-activation.php:85
 msgid "This plugin"
 msgstr ""
 
-#: ../includes/class-activation.php:82
+#: ../includes/class-activation.php:121
 #, php-format
-msgid "requires %s. Please activate it to continue."
+msgid "%1$s requires %2$s. Please activate it to continue."
 msgstr ""
 
-#: ../includes/class-activation.php:85
+#: ../includes/class-activation.php:125
 #, php-format
-msgid "requires %s. Please install it to continue."
+msgid "%1$s requires %2$s. Please install it to continue."
 msgstr ""
