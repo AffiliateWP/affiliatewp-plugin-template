@@ -257,7 +257,7 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 
 				$url = admin_url( 'admin.php?page=affiliate-wp-add-ons' );
 
-				$plugins_link = array( '<a title="' . esc_attr__( 'Get more add-ons for AffiliateWP', 'affiliatewp-flag-affiliates' ) . '" href="' . esc_url( $url ) . '">' . __( 'More add-ons', 'affiliatewp-flag-affiliates' ) . '</a>' );
+				$plugins_link = array( '<a alt="' . esc_attr__( 'Get more add-ons for AffiliateWP', 'affiliatewp-flag-affiliates' ) . '" href="' . esc_url( $url ) . '">' . __( 'More add-ons', 'affiliatewp-flag-affiliates' ) . '</a>' );
 
 		        $links = array_merge( $links, $plugins_link );
 		    }
