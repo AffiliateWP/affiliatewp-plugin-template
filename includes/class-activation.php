@@ -117,10 +117,10 @@ class AffiliateWP_Activation {
     public function missing_affiliatewp_notice() {
 
         if ( $this->has_affiliatewp ) {
-           echo '<div class="error"><p>' .  $this->plugin_name . ' ' . sprintf( __( 'requires %s. Please activate it to continue.', 'affiliatewp-plugin-template' ), '<a href="https://affiliatewp.com/" target="_blank">AffiliateWP</a>' ) . '</p></div>';
+			echo '<div class="error"><p>' . sprintf( __( '%1$s requires %2$s. Please activate it to continue.', 'affiliatewp-plugin-template' ), $this->plugin_name, '<a href="https://affiliatewp.com/" target="_new">AffiliateWP</a>' ) . '</p></div>';
 
         } else {
-            echo '<div class="error"><p>' . $this->plugin_name . ' ' . sprintf( __( 'requires %s. Please install it to continue.', 'affiliatewp-plugin-template' ), '<a href="https://affiliatewp.com/" target="_blank">AffiliateWP</a>' ) . '</p></div>';
+        	echo '<div class="error"><p>' . sprintf( __( '%1$s requires %2$s. Please install it to continue.', 'affiliatewp-plugin-template' ), $this->plugin_name, '<a href="https://affiliatewp.com/" target="_new">AffiliateWP</a>' ) . '</p></div>';
         }
     }
 }
