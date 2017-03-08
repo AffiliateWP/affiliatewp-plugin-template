@@ -2,8 +2,8 @@
 /**
  * Activation handler
  *
- * @package     AffiliateWP\ActivationHandler
- * @since       1.0.0
+ * @package AffiliateWP\ActivationHandler
+ * @since   1.0.0
  */
 
 
@@ -14,14 +14,17 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * AffiliateWP Activation Handler Class
  *
- * @since       1.0.0
+ * @since 1.0.0
  */
 class AffiliateWP_Activation {
 
     public $plugin_name, $plugin_path, $plugin_file, $has_affiliatewp;
 
     /**
-     * Setup the activation class
+     * Sets up the activation class.
+     *
+     * @access public
+     * @since  1.0.0
      *
      * @access      public
      * @since       1.0.0
@@ -58,23 +61,23 @@ class AffiliateWP_Activation {
 
 
     /**
-     * Process plugin deactivation
+     * Processes plugin deactivation.
      *
-     * @access      public
-     * @since       1.0.0
-     * @return      void
+     * @access public
+     * @since  1.0.0
      */
     public function run() {
-        // Display notice
+        // Display notice.
         add_action( 'admin_notices', array( $this, 'missing_affiliatewp_notice' ) );
     }
 
     /**
-     * Display notice if AffiliateWP isn't installed
+     * Displays a notice if AffiliateWP isn't installed.
      *
-     * @access      public
-     * @since       1.0.0
-     * @return      string The notice to display
+     * @access public
+     * @since  1.0.0
+     *
+     * @return string The notice markup to display.
      */
     public function missing_affiliatewp_notice() {
 
