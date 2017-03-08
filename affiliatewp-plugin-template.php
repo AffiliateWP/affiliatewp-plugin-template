@@ -189,22 +189,28 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 			$lang_dir = apply_filters( 'affiliatewp_plugin_template_languages_directory', $lang_dir );
 
 			// Traditional WordPress plugin locale filter.
-			$locale   = apply_filters( 'plugin_locale',  get_locale(), 'affiliatewp-plugin-template' );
-			$mofile   = sprintf( '%1$s-%2$s.mo', 'affiliatewp-plugin-template', $locale );
+			$locale = apply_filters( 'plugin_locale',  get_locale(), 'affiliatewp-plugin-template' );
+			$mofile = sprintf( '%1$s-%2$s.mo', 'affiliatewp-plugin-template', $locale );
 
 			// Setup paths to current locale file.
 			$mofile_local  = $lang_dir . $mofile;
 			$mofile_global = WP_LANG_DIR . '/affiliatewp-plugin-template/' . $mofile;
 
 			if ( file_exists( $mofile_global ) ) {
+
 				// Look in global /wp-content/languages/affiliatewp-flag-affiliates/ folder.
 				load_textdomain( 'affiliatewp-plugin-template', $mofile_global );
+
 			} elseif ( file_exists( $mofile_local ) ) {
+
 				// Look in local /wp-content/plugins/affiliatewp-flag-affiliates/languages/ folder.
 				load_textdomain( 'affiliatewp-plugin-template', $mofile_local );
+
 			} else {
+
 				// Load the default language files.
 				load_plugin_textdomain( 'affiliatewp-plugin-template', false, $lang_dir );
+
 			}
 		}
 
@@ -276,14 +282,18 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 	 */
 	function affiliatewp_plugin_template() {
 	    if ( ! class_exists( 'Affiliate_WP' ) ) {
+
 	        if ( ! class_exists( 'AffiliateWP_Activation' ) ) {
 	            require_once 'includes/class-activation.php';
 	        }
 
 	        $activation = new AffiliateWP_Activation( plugin_dir_path( __FILE__ ), basename( __FILE__ ) );
 	        $activation = $activation->run();
+
 	    } else {
+
 	        return AffiliateWP_Plugin_Template::instance();
+
 	    }
 	}
 	add_action( 'plugins_loaded', 'affiliatewp_plugin_template', 100 );
