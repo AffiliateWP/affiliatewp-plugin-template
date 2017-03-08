@@ -118,10 +118,12 @@ class AffiliateWP_Activation {
 
         if ( $this->has_affiliatewp ) {
 
+        	/* translators: 1: Plugin name, 2: AffiliateWP */
 			echo '<div class="error"><p>' . sprintf( __( '%1$s requires %2$s. Please activate it to continue.', 'affiliatewp-plugin-template' ), $this->plugin_name, '<a href="https://affiliatewp.com/" target="_new">AffiliateWP</a>' ) . '</p></div>';
 
         } else {
 
+        	/* translators: 1: Plugin name, 2: AffiliateWP */
         	echo '<div class="error"><p>' . sprintf( __( '%1$s requires %2$s. Please install it to continue.', 'affiliatewp-plugin-template' ), $this->plugin_name, '<a href="https://affiliatewp.com/" target="_new">AffiliateWP</a>' ) . '</p></div>';
 
         }
