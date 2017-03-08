@@ -62,9 +62,8 @@ class AffiliateWP_Activation {
      * @access public
      * @since  1.0.0
      *
-     * @access      public
-     * @since       1.0.0
-     * @return      void
+     * @param string $plugin_path Plugin path.
+     * @param string $plugin_file Main plugin filename.
      */
     public function __construct( $plugin_path, $plugin_file ) {
         // We need plugin.php!
