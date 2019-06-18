@@ -40,8 +40,8 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 		/**
 		 * Holds the instance.
 		 *
-		 * Ensures that only one instance of AffiliateWP_Plugin_Template exists in memory at any one
-		 * time and it also prevents needing to define globals all over the place.
+		 * Ensures that only one instance of the plugin bootstrap exists in memory at any
+		 * one time and it also prevents needing to define globals all over the place.
 		 *
 		 * TL;DR This is a static property property that holds the singleton instance.
 		 *
@@ -172,7 +172,7 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 			$lang_dir = dirname( plugin_basename( __FILE__ ) ) . '/languages/';
 
 			/**
-			 * Filters the languages directory for AffiliateWP Plugin Template plugin.
+			 * Filters the languages directory for the add-on.
 			 *
 			 * @since 1.0.0
 			 *
@@ -180,7 +180,7 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 			 */
 			$lang_dir = apply_filters( 'affiliatewp_plugin_template_languages_directory', $lang_dir );
 
-			// Traditional WordPress plugin locale filter.
+			// Traditional WordPress plugin locale filter..
 			$locale = apply_filters( 'plugin_locale',  get_locale(), 'affiliatewp-plugin-template' );
 			$mofile = sprintf( '%1$s-%2$s.mo', 'affiliatewp-plugin-template', $locale );
 
@@ -225,8 +225,7 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 		 * @return void
 		 */
 		private function hooks() {
-
-			// plugin meta
+			// Plugin meta.
 			add_filter( 'plugin_row_meta', array( $this, 'plugin_meta' ), null, 2 );
 
 		}
@@ -257,8 +256,8 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 	}
 
 	/**
-	 * The main function responsible for returning the one true AffiliateWP_Plugin_Template
-	 * instance to functions everywhere.
+	 * The main function responsible for returning the one true bootstrap instance
+	 * to functions everywhere.
 	 *
 	 * Use this function like you would a global variable, except without needing
 	 * to declare the global.
@@ -267,7 +266,7 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return \AffiliateWP_Plugin_Template The one true AffiliateWP_Plugin_Template instance.
+	 * @return \AffiliateWP_Plugin_Template The one true bootstrap instance.
 	 */
 	function affiliatewp_plugin_template() {
 	    if ( ! class_exists( 'Affiliate_WP' ) ) {
