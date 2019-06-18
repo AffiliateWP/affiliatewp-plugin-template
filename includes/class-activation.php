@@ -12,7 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-
 /**
  * AffiliateWP Activation Handler Class
  *
@@ -23,44 +22,39 @@ class AffiliateWP_Activation {
 	/**
 	 * Plugin name.
 	 *
-	 * @access public
-	 * @since  1.0.0
-	 * @var    string
+	 * @since 1.0.0
+	 * @var   string
 	 */
     public $plugin_name;
 
 	/**
 	 * Plugin path.
 	 *
-	 * @access public
-	 * @since  1.0.0
-	 * @var    string
+	 * @since 1.0.0
+	 * @var   string
 	 */
     public $plugin_path;
 
 	/**
 	 * Main plugin filename.
 	 *
-	 * @access public
-	 * @since  1.0.0
-	 * @var    string
+	 * @since 1.0.0
+	 * @var   string
 	 */
     public $plugin_file;
 
 	/**
 	 * Whether AffiliateWP is installed.
 	 *
-	 * @access public
-	 * @since  1.0.0
-	 * @var    bool
+	 * @since 1.0.0
+	 * @var   bool
 	 */
     public $has_affiliatewp;
 
     /**
      * Sets up the activation class.
      *
-     * @access public
-     * @since  1.0.0
+     * @since 1.0.0
      *
      * @param string $plugin_path Plugin path.
      * @param string $plugin_file Main plugin filename.
@@ -98,8 +92,7 @@ class AffiliateWP_Activation {
     /**
      * Processes plugin deactivation.
      *
-     * @access public
-     * @since  1.0.0
+     * @since 1.0.0
      */
     public function run() {
         // Display notice.
@@ -109,8 +102,7 @@ class AffiliateWP_Activation {
     /**
      * Displays a notice if AffiliateWP isn't installed.
      *
-     * @access public
-     * @since  1.0.0
+     * @since 1.0.0
      *
      * @return string The notice markup to display.
      */

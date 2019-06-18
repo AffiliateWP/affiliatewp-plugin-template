@@ -5,7 +5,7 @@
  * Description:
  * Author: AffiliateWP, LLC
  * Author URI: https://affiliatewp.com
- * Version: 1.0
+ * Version: 1.0.0
  * Text Domain: affiliatewp-plugin-template
  * Domain Path: languages
  *
@@ -32,7 +32,7 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 	/**
 	 * Setup class.
 	 *
-	 * @since 1.0
+	 * @since 1.0.0
 	 * @final
 	 */
 	final class AffiliateWP_Plugin_Template {
@@ -45,9 +45,8 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 		 *
 		 * TL;DR This is a static property property that holds the singleton instance.
 		 *
-		 * @access private
-		 * @since  1.0
-		 * @var    \AffiliateWP_Plugin_Template
+		 * @since 1.0.0
+		 * @var   \AffiliateWP_Plugin_Template
 		 * @static
 		 */
 		private static $instance;
@@ -55,33 +54,31 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 		/**
 		 * The version number.
 		 *
-		 * @access private
-		 * @since  1.0
+		 * @since 1.0.0
 		 * @var    string
 		 */
-		private $version = '1.0';
+		private $version = '1.0.0';
 
 		/**
-		 * Generates the main AffiliateWP_Plugin_Template instance.
+		 * Generates the main bootstrap instance.
 		 *
-		 * Insures that only one instance of AffiliateWP_Plugin_Template exists in memory at any one
+		 * Insures that only one instance of bootstrap exists in memory at any one
 		 * time. Also prevents needing to define globals all over the place.
 		 *
-		 * @access	public
-		 * @since	1.0
+		 * @since 1.0
 		 * @static
 		 *
-		 * @return \AffiliateWP_Plugin_Template The one true AffiliateWP_Plugin_Template instance.
+		 * @return \AffiliateWP_Plugin_Template The one true bootstrap instance.
 		 */
 		public static function instance() {
 			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof AffiliateWP_Plugin_Template ) ) {
 
 				self::$instance = new AffiliateWP_Plugin_Template;
+
 				self::$instance->setup_constants();
 				self::$instance->load_textdomain();
 				self::$instance->includes();
 				self::$instance->hooks();
-
 			}
 
 			return self::$instance;
@@ -93,21 +90,19 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 		 * The whole idea of the singleton design pattern is that there is a single
 		 * object therefore, we don't want the object to be cloned.
 		 *
- 		 * @access protected
-		 * @since  1.0
+		 * @since 1.0.0
 		 *
 		 * @return void
 		 */
 		protected function __clone() {
-			// Cloning instances of the class is forbidden
+			// Cloning instances of the class is forbidden.
 			_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'affiliatewp-plugin-template' ), '1.0' );
 		}
 
 		/**
 		 * Disables unserialization of the class.
 		 *
-		 * @access protected
-		 * @since  1.0
+		 * @since 1.0.0
 		 *
 		 * @return void
 		 */
@@ -119,8 +114,7 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 		/**
 		 * Sets up the class.
 		 *
-		 * @access private
-		 * @since  1.0
+		 * @since 1.0.0
 		 */
 		private function __construct() {
 			self::$instance = $this;
@@ -129,8 +123,7 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 		/**
 		 * Resets the instance of the class.
 		 *
-		 * @access public
-		 * @since  1.0
+		 * @since 1.0.0
 		 * @static
 		 */
 		public static function reset() {
@@ -140,38 +133,36 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 		/**
 		 * Sets up plugin constants.
 		 *
-		 * @access private
-		 * @since  1.0
+		 * @since 1.0.0
 		 *
 		 * @return void
 		 */
 		private function setup_constants() {
-			// Plugin version
+			// Plugin version.
 			if ( ! defined( 'AFFWP_PT_VERSION' ) ) {
 				define( 'AFFWP_PT_VERSION', $this->version );
 			}
 
-			// Plugin Folder Path
+			// Plugin Folder Path.
 			if ( ! defined( 'AFFWP_PT_PLUGIN_DIR' ) ) {
 				define( 'AFFWP_PT_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 			}
 
-			// Plugin Folder URL
+			// Plugin Folder URL.
 			if ( ! defined( 'AFFWP_PT_PLUGIN_URL' ) ) {
 				define( 'AFFWP_PT_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 			}
 
-			// Plugin Root File
+			// Plugin Root File.
 			if ( ! defined( 'AFFWP_PT_PLUGIN_FILE' ) ) {
 				define( 'AFFWP_PT_PLUGIN_FILE', __FILE__ );
 			}
 		}
 
 		/**
-		 * Loads the plugin language files.
+		 * Loads the add-on language files.
 		 *
-		 * @access public
-		 * @since  1.0
+		 * @since 1.0.0
 		 *
 		 * @return void
 		 */
@@ -183,7 +174,7 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 			/**
 			 * Filters the languages directory for AffiliateWP Plugin Template plugin.
 			 *
-			 * @since 1.0
+			 * @since 1.0.0
 			 *
 			 * @param string $lang_dir Language directory.
 			 */
@@ -218,8 +209,7 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 		/**
 		 * Includes necessary files.
 		 *
-		 * @access private
-		 * @since  1.0
+		 * @since 1.0.0
 		 *
 		 * @return void
 		 */
@@ -230,8 +220,7 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 		/**
 		 * Sets up the default hooks and actions.
 		 *
-		 * @access private
-		 * @since  1.0
+		 * @since 1.0.0
 		 *
 		 * @return void
 		 */
@@ -245,8 +234,7 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 		/**
 		 * Modifies the plugin list table meta links.
 		 *
-		 * @access public
-		 * @since  1.0
+		 * @since 1.0.0
 		 *
 		 * @param array  $links The current links array.
 		 * @param string $file  A specific plugin table entry.
@@ -277,7 +265,7 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 	 *
 	 * Example: <?php $affiliatewp_plugin_template = affiliatewp_plugin_template(); ?>
 	 *
-	 * @since  1.0
+	 * @since 1.0.0
 	 *
 	 * @return \AffiliateWP_Plugin_Template The one true AffiliateWP_Plugin_Template instance.
 	 */
