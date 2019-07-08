@@ -27,263 +27,518 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
+/**
+ * Implements requirements checks and partial activation before bootstrapping the add-on.
+ *
+ * @since 1.0.0
+ * @final
+ */
+final class AffWP_PT_Requirements_Check {
 
 	/**
-	 * Setup class.
+	 * Plugin file path.
 	 *
 	 * @since 1.0.0
-	 * @final
+	 * @var   string
 	 */
-	final class AffiliateWP_Plugin_Template {
+	private $file = '';
 
-		/**
-		 * Holds the instance.
-		 *
-		 * Ensures that only one instance of the plugin bootstrap exists in memory at any
-		 * one time and it also prevents needing to define globals all over the place.
-		 *
-		 * TL;DR This is a static property property that holds the singleton instance.
-		 *
-		 * @since 1.0.0
-		 * @var   \AffiliateWP_Plugin_Template
-		 * @static
-		 */
-		private static $instance;
+	/**
+	 * Plugin basename.
+	 *
+	 * @since 1.0.0
+	 * @var   string
+	 */
+	private $base = '';
 
-		/**
-		 * The version number.
-		 *
-		 * @since 1.0.0
-		 * @var    string
-		 */
-		private $version = '1.0.0';
+	/**
+	 * Requirements array.
+	 *
+	 * @since 1.0.0
+	 * @var   array
+	 */
+	private $requirements = array(
 
-		/**
-		 * Generates the main bootstrap instance.
-		 *
-		 * Insures that only one instance of bootstrap exists in memory at any one
-		 * time. Also prevents needing to define globals all over the place.
-		 *
-		 * @since 1.0
-		 * @static
-		 *
-		 * @return \AffiliateWP_Plugin_Template The one true bootstrap instance.
-		 */
-		public static function instance() {
-			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof AffiliateWP_Plugin_Template ) ) {
+		// PHP
+		'php' => array(
+			'minimum' => '5.6.0',
+			'name'    => 'PHP',
+			'exists'  => true,
+			'current' => false,
+			'checked' => false,
+			'met'     => false
+		),
 
-				self::$instance = new AffiliateWP_Plugin_Template;
+		// WordPress
+		'wp' => array(
+			'minimum' => '5.0',
+			'name'    => 'WordPress',
+			'exists'  => true,
+			'current' => false,
+			'checked' => false,
+			'met'     => false
+		),
 
-				self::$instance->setup_constants();
-				self::$instance->load_textdomain();
-				self::$instance->includes();
-				self::$instance->hooks();
-			}
+		// AffWP
+		'affwp' => array(
+			'minimum' => '2.2.17',
+			'name'    => 'AffiliateWP',
+			'exists'  => true,
+			'current' => false,
+			'checked' => false,
+			'met'     => false
+		),
+	);
 
-			return self::$instance;
+	/**
+	 * Sets up the plugin requirements.
+	 *
+	 * @since 1.0.0
+	 */
+	public function __construct() {
+
+		// Setup file & base
+		$this->file = __FILE__;
+		$this->base = plugin_basename( $this->file );
+
+		// Always load translations.
+		add_action( 'plugins_loaded', array( $this, 'load_textdomain' ) );
+
+		// Load or quit.
+		$this->met() ? $this->load() : $this->quit();
+	}
+
+	/**
+	 * Quit without loading
+	 *
+	 * @since 1.0.0
+	 */
+	private function quit() {
+		add_action( 'admin_head',                        array( $this, 'admin_head'        ) );
+		add_filter( "plugin_action_links_{$this->base}", array( $this, 'plugin_row_links'  ) );
+		add_action( "after_plugin_row_{$this->base}",    array( $this, 'plugin_row_notice' ) );
+	}
+
+	/** Specific Methods ******************************************************/
+
+	/**
+	 * Load normally
+	 *
+	 * @since 1.0.0
+	 */
+	private function load() {
+
+		// Maybe include the bundled bootstrapper.
+		if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
+			require_once dirname( $this->file ) . '/includes/class-affiliatewp-plugin-template.php';
 		}
 
-		/**
-		 * Throws an error on object clone.
-		 *
-		 * The whole idea of the singleton design pattern is that there is a single
-		 * object therefore, we don't want the object to be cloned.
-		 *
-		 * @since 1.0.0
-		 *
-		 * @return void
-		 */
-		protected function __clone() {
-			// Cloning instances of the class is forbidden.
-			_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'affiliatewp-plugin-template' ), '1.0' );
-		}
+		// Maybe hook-in the bootstrapper.
+		if ( class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 
-		/**
-		 * Disables unserialization of the class.
-		 *
-		 * @since 1.0.0
-		 *
-		 * @return void
-		 */
-		protected function __wakeup() {
-			// Unserializing instances of the class is forbidden
-			_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'affiliatewp-plugin-template' ), '1.0' );
-		}
-
-		/**
-		 * Sets up the class.
-		 *
-		 * @since 1.0.0
-		 */
-		private function __construct() {
-			self::$instance = $this;
-		}
-
-		/**
-		 * Resets the instance of the class.
-		 *
-		 * @since 1.0.0
-		 * @static
-		 */
-		public static function reset() {
-			self::$instance = null;
-		}
-
-		/**
-		 * Sets up plugin constants.
-		 *
-		 * @since 1.0.0
-		 *
-		 * @return void
-		 */
-		private function setup_constants() {
-			// Plugin version.
-			if ( ! defined( 'AFFWP_PT_VERSION' ) ) {
-				define( 'AFFWP_PT_VERSION', $this->version );
-			}
-
-			// Plugin Folder Path.
-			if ( ! defined( 'AFFWP_PT_PLUGIN_DIR' ) ) {
-				define( 'AFFWP_PT_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-			}
-
-			// Plugin Folder URL.
-			if ( ! defined( 'AFFWP_PT_PLUGIN_URL' ) ) {
-				define( 'AFFWP_PT_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-			}
-
-			// Plugin Root File.
-			if ( ! defined( 'AFFWP_PT_PLUGIN_FILE' ) ) {
-				define( 'AFFWP_PT_PLUGIN_FILE', __FILE__ );
-			}
-		}
-
-		/**
-		 * Loads the add-on language files.
-		 *
-		 * @since 1.0.0
-		 *
-		 * @return void
-		 */
-		public function load_textdomain() {
-
-			// Set filter for plugin's languages directory.
-			$lang_dir = dirname( plugin_basename( __FILE__ ) ) . '/languages/';
-
-			/**
-			 * Filters the languages directory for the add-on.
-			 *
-			 * @since 1.0.0
-			 *
-			 * @param string $lang_dir Language directory.
+			/*
+			 * Bootstrap to plugins_loaded before priority 10 to make sure
+			 * add-ons are loaded after us.
 			 */
-			$lang_dir = apply_filters( 'affiliatewp_plugin_template_languages_directory', $lang_dir );
+			add_action( 'plugins_loaded', array( $this, 'bootstrap' ), 4 );
 
-			// Traditional WordPress plugin locale filter..
-			$locale = apply_filters( 'plugin_locale',  get_locale(), 'affiliatewp-plugin-template' );
-			$mofile = sprintf( '%1$s-%2$s.mo', 'affiliatewp-plugin-template', $locale );
-
-			// Setup paths to current locale file.
-			$mofile_local  = $lang_dir . $mofile;
-			$mofile_global = WP_LANG_DIR . '/affiliatewp-plugin-template/' . $mofile;
-
-			if ( file_exists( $mofile_global ) ) {
-
-				// Look in global /wp-content/languages/affiliatewp-flag-affiliates/ folder.
-				load_textdomain( 'affiliatewp-plugin-template', $mofile_global );
-
-			} elseif ( file_exists( $mofile_local ) ) {
-
-				// Look in local /wp-content/plugins/affiliatewp-flag-affiliates/languages/ folder.
-				load_textdomain( 'affiliatewp-plugin-template', $mofile_local );
-
-			} else {
-
-				// Load the default language files.
-				load_plugin_textdomain( 'affiliatewp-plugin-template', false, $lang_dir );
-
-			}
-		}
-
-		/**
-		 * Includes necessary files.
-		 *
-		 * @since 1.0.0
-		 *
-		 * @return void
-		 */
-		private function includes() {
-		//	require_once AFFWP_PT_PLUGIN_DIR . 'includes/file-name.php';
-		}
-
-		/**
-		 * Sets up the default hooks and actions.
-		 *
-		 * @since 1.0.0
-		 *
-		 * @return void
-		 */
-		private function hooks() {
-			// Plugin meta.
-			add_filter( 'plugin_row_meta', array( $this, 'plugin_meta' ), null, 2 );
-
-		}
-
-		/**
-		 * Modifies the plugin list table meta links.
-		 *
-		 * @since 1.0.0
-		 *
-		 * @param array  $links The current links array.
-		 * @param string $file  A specific plugin table entry.
-		 * @return array The modified links array.
-		 */
-		public function plugin_meta( $links, $file ) {
-
-		    if ( $file == plugin_basename( __FILE__ ) ) {
-
-				$url = admin_url( 'admin.php?page=affiliate-wp-add-ons' );
-
-				$plugins_link = array( '<a alt="' . esc_attr__( 'Get more add-ons for AffiliateWP', 'affiliatewp-flag-affiliates' ) . '" href="' . esc_url( $url ) . '">' . __( 'More add-ons', 'affiliatewp-flag-affiliates' ) . '</a>' );
-
-		        $links = array_merge( $links, $plugins_link );
-		    }
-
-		    return $links;
-
+			// Register the activation hook.
+			register_activation_hook( $this->file, array( $this, 'install' ) );
 		}
 	}
 
 	/**
-	 * The main function responsible for returning the one true bootstrap instance
-	 * to functions everywhere.
+	 * Runs the install, usually on an activation hook.
 	 *
-	 * Use this function like you would a global variable, except without needing
-	 * to declare the global.
+	 * @since 1.0.0
+	 */
+	public function install() {
+
+		// Bootstrap to include all of the necessary files
+		$this->bootstrap();
+
+		// Run other install code ...
+	}
+
+	/**
+	 * Bootstraps the actual plugin file.
 	 *
-	 * Example: <?php $affiliatewp_plugin_template = affiliatewp_plugin_template(); ?>
+	 * @since 1.0.0
+	 */
+	public function bootstrap() {
+		AffiliateWP_Plugin_Template::instance( $this->file );
+	}
+
+	/**
+	 * Plugin specific URL for an external requirements page.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return \AffiliateWP_Plugin_Template The one true bootstrap instance.
+	 * @return string URL to an externally-hosted minimum requirements document.
 	 */
-	function affiliatewp_plugin_template() {
-	    if ( ! class_exists( 'Affiliate_WP' ) ) {
-
-	        if ( ! class_exists( 'AffiliateWP_Activation' ) ) {
-	            require_once 'includes/class-activation.php';
-	        }
-
-	        $activation = new AffiliateWP_Activation( plugin_dir_path( __FILE__ ), basename( __FILE__ ) );
-	        $activation = $activation->run();
-
-	    } else {
-
-	        return AffiliateWP_Plugin_Template::instance();
-
-	    }
+	private function unmet_requirements_url() {
+		return 'https://...';
 	}
-	add_action( 'plugins_loaded', 'affiliatewp_plugin_template', 100 );
 
+	/**
+	 * Outputs plugin-specific text to quickly explain what's wrong (in the plugins list table).
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string Message to explain that partial activation is in effect.
+	 */
+	private function unmet_requirements_text() {
+		esc_html_e( 'This plugin is not fully active.', 'affiliatewp-plugin-template' );
+	}
+
+	/**
+	 * Retrieves plugin-specific text to describe a single unmet requirement.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string Message for a single unmet requirement.
+	 */
+	private function unmet_requirements_description_text() {
+		return esc_html__( 'Requires %s (%s), but (%s) is installed.', 'affiliatewp-plugin-template' );
+	}
+
+	/**
+	 * Retrieves plugin-specific text to describe a single missing requirement.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string Message for a single missing requirement.
+	 */
+	private function unmet_requirements_missing_text() {
+		return esc_html__( 'Requires %s (%s), but it appears to be missing.', 'affiliatewp-plugin-template' );
+	}
+
+	/**
+	 * Retrieves plugin-specific text used to link to an external requirements page.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string Label to use when linking to the externally-hosted minimum requirements document.
+	 */
+	private function unmet_requirements_link() {
+		return esc_html__( 'Requirements', 'affiliatewp-plugin-template' );
+	}
+
+	/**
+	 * Retrieves plugin-specific aria label text to describe the requirements link.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string
+	 */
+	private function unmet_requirements_label() {
+		return esc_html__( 'AffiliateWP - Plugin Template Requirements', 'affiliatewp-plugin-template' );
+	}
+
+	/**
+	 * Retrieves plugin-specific text used in CSS to identify attribute IDs and classes.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string
+	 */
+	private function unmet_requirements_name() {
+		return 'affiliatewp-plugin-template-requirements';
+	}
+
+	/** Agnostic Methods ******************************************************/
+
+	/**
+	 * Outputs an additional row in the plugins list table to display messages.
+	 *
+	 * @since 1.0.0
+	 */
+	public function plugin_row_notice() {
+		?><tr class="active <?php echo esc_attr( $this->unmet_requirements_name() ); ?>-row">
+		<th class="check-column">
+			<span class="dashicons dashicons-warning"></span>
+		</th>
+		<td class="column-primary">
+			<?php $this->unmet_requirements_text(); ?>
+		</td>
+		<td class="column-description">
+			<?php $this->unmet_requirements_description(); ?>
+		</td>
+		</tr><?php
+	}
+
+	/**
+	 * Outputs unmet requirement descriptions.
+	 *
+	 * @since 1.0.0
+	 */
+	private function unmet_requirements_description() {
+		foreach ( $this->requirements as $properties ) {
+			if ( empty( $properties['met'] ) ) {
+				$this->unmet_requirement_description( $properties );
+			}
+		}
+	}
+
+	/**
+	 * Outputs specific unmet requirement information.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $requirement Requirements.
+	 */
+	private function unmet_requirement_description( $requirement = array() ) {
+
+		// Requirement exists, but is out of date
+		if ( ! empty( $requirement['exists'] ) ) {
+			$text = sprintf(
+				$this->unmet_requirements_description_text(),
+				'<strong>' . esc_html( $requirement['name']    ) . '</strong>',
+				'<strong>' . esc_html( $requirement['minimum'] ) . '</strong>',
+				'<strong>' . esc_html( $requirement['current'] ) . '</strong>'
+			);
+
+			// Requirement could not be found
+		} else {
+			$text = sprintf(
+				$this->unmet_requirements_missing_text(),
+				'<strong>' . esc_html( $requirement['name']    ) . '</strong>',
+				'<strong>' . esc_html( $requirement['minimum'] ) . '</strong>'
+			);
+		}
+
+		// Output the description
+		echo '<p>' . $text . '</p>';
+	}
+
+	/**
+	 * Outputs styling for unmet requirements in the plugins list table.
+	 *
+	 * @since 1.0.0
+	 */
+	public function admin_head() {
+
+		// Get the requirements row name
+		$name = $this->unmet_requirements_name(); ?>
+
+		<style id="<?php echo esc_attr( $name ); ?>">
+			.plugins tr[data-plugin="<?php echo esc_html( $this->base ); ?>"] th,
+			.plugins tr[data-plugin="<?php echo esc_html( $this->base ); ?>"] td,
+			.plugins .<?php echo esc_html( $name ); ?>-row th,
+			.plugins .<?php echo esc_html( $name ); ?>-row td {
+				background: #fff5f5;
+			}
+			.plugins tr[data-plugin="<?php echo esc_html( $this->base ); ?>"] th {
+				box-shadow: none;
+			}
+			.plugins .<?php echo esc_html( $name ); ?>-row th span {
+				margin-left: 6px;
+				color: #dc3232;
+			}
+			.plugins tr[data-plugin="<?php echo esc_html( $this->base ); ?>"] th,
+			.plugins .<?php echo esc_html( $name ); ?>-row th.check-column {
+				border-left: 4px solid #dc3232 !important;
+			}
+			.plugins .<?php echo esc_html( $name ); ?>-row .column-description p {
+				margin: 0;
+				padding: 0;
+			}
+			.plugins .<?php echo esc_html( $name ); ?>-row .column-description p:not(:last-of-type) {
+				margin-bottom: 8px;
+			}
+		</style>
+		<?php
+	}
+
+	/**
+	 * Adds the "Requirements" link to the plugin row actions.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $links Plugin row links.
+	 * @return array Modified row links array.
+	 */
+	public function plugin_row_links( $links = array() ) {
+
+		// Add the Requirements link
+		$links['requirements'] =
+			'<a href="' . esc_url( $this->unmet_requirements_url() ) . '" aria-label="' . esc_attr( $this->unmet_requirements_label() ) . '">'
+			. esc_html( $this->unmet_requirements_link() )
+			. '</a>';
+
+		// Return links with Requirements link
+		return $links;
+	}
+
+	/** Checkers **************************************************************/
+
+	/**
+	 * Runs the actual dependencies checks and compiles the findings.
+	 *
+	 * @since 1.0.0
+	 */
+	private function check() {
+
+		// Loop through requirements
+		foreach ( $this->requirements as $dependency => $properties ) {
+
+			// Which dependency are we checking?
+			switch ( $dependency ) {
+
+				// PHP
+				case 'php' :
+					$version = phpversion();
+					break;
+
+				// WP
+				case 'wp' :
+					$version = get_bloginfo( 'version' );
+					break;
+
+				case 'affwp':
+					$version = get_option( 'affwp_version' );
+					break;
+
+				// Unknown
+				default :
+					$version = false;
+					break;
+			}
+
+			// Merge to original array
+			if ( ! empty( $version ) ) {
+				$this->requirements[ $dependency ] = array_merge( $this->requirements[ $dependency ], array(
+					'current' => $version,
+					'checked' => true,
+					'met'     => version_compare( $version, $properties['minimum'], '>=' )
+				) );
+			}
+		}
+	}
+
+	/**
+	 * Determines if all requirements been met.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return bool True if requirements are met, otherwise false.
+	 */
+	public function met() {
+
+		// Run the check
+		$this->check();
+
+		// Default to true (any false below wins).
+		$retval  = true;
+		$to_meet = wp_list_pluck( $this->requirements, 'met' );
+
+		// Look for unmet dependencies, and exit if so
+		foreach ( $to_meet as $met ) {
+			if ( empty( $met ) ) {
+				$retval = false;
+				continue;
+			}
+		}
+
+		// Return
+		return $retval;
+	}
+
+	/** Translations **********************************************************/
+
+	/**
+	 * Loads the plugin textdomain.
+	 *
+	 * @since 1.0.0
+	 */
+	public function load_textdomain() {
+
+		/*
+		 * Due to the introduction of language packs through translate.wordpress.org,
+		 * loading our textdomain is complex.
+		 *
+		 * In v2.4.6, our textdomain changed from "edd" to "affiliatewp-plugin-template".
+		 *
+		 * To support existing translation files from before the change, we must
+		 * look for translation files in several places and under several names.
+		 *
+		 * - wp-content/languages/plugins/affiliatewp-plugin-template (introduced with language packs)
+		 * - wp-content/languages/edd/ (custom folder we have supported since 1.4)
+		 * - wp-content/plugins/affiliatewp-plugin-template/languages/
+		 *
+		 * In wp-content/languages/edd/ we must look for:
+		 * - "affiliatewp-plugin-template-{lang}_{country}.mo"
+		 *
+		 * In wp-content/languages/edd/ we must look for:
+		 * - "edd-{lang}_{country}.mo" as that was the old file naming convention
+		 *
+		 * In wp-content/languages/plugins/affiliatewp-plugin-template/ we only need to look for:
+		 * - "affiliatewp-plugin-template-{lang}_{country}.mo" as that is the new structure
+		 *
+		 * In wp-content/plugins/affiliatewp-plugin-template/languages/, we must look for:
+		 * - both naming conventions. This is done by filtering "load_textdomain_mofile"
+		 */
+		add_filter( 'load_textdomain_mofile', array( $this, 'load_old_textdomain' ), 10, 2 );
+
+		// Set filter for plugin's languages directory.
+		$edd_lang_dir = dirname( $this->base ) . '/languages/';
+		$edd_lang_dir = apply_filters( 'edd_languages_directory', $edd_lang_dir );
+		$get_locale   = function_exists( 'get_user_locale' )
+			? get_user_locale()
+			: get_locale();
+
+		/**
+		 * Defines the plugin language locale used in Easy Digital Downloads.
+		 *
+		 * @var $get_locale The locale to use. Uses get_user_locale()` in WordPress 4.7 or greater,
+		 *                  otherwise uses `get_locale()`.
+		 */
+		$locale = apply_filters( 'plugin_locale', $get_locale, 'affiliatewp-plugin-template' );
+		$mofile = sprintf( '%1$s-%2$s.mo', 'affiliatewp-plugin-template', $locale );
+
+		// Look for wp-content/languages/edd/affiliatewp-plugin-template-{lang}_{country}.mo
+		$mofile_global1 = WP_LANG_DIR . "/edd/affiliatewp-plugin-template-{$locale}.mo";
+
+		// Look for wp-content/languages/edd/edd-{lang}_{country}.mo
+		$mofile_global2 = WP_LANG_DIR . "/edd/edd-{$locale}.mo";
+
+		// Look in wp-content/languages/plugins/affiliatewp-plugin-template
+		$mofile_global3 = WP_LANG_DIR . "/plugins/affiliatewp-plugin-template/{$mofile}";
+
+		// Try to load from first global location
+		if ( file_exists( $mofile_global1 ) ) {
+			load_textdomain( 'affiliatewp-plugin-template', $mofile_global1 );
+
+			// Try to load from next global location
+		} elseif ( file_exists( $mofile_global2 ) ) {
+			load_textdomain( 'affiliatewp-plugin-template', $mofile_global2 );
+
+			// Try to load from next global location
+		} elseif ( file_exists( $mofile_global3 ) ) {
+			load_textdomain( 'affiliatewp-plugin-template', $mofile_global3 );
+
+			// Load the default language files
+		} else {
+			load_plugin_textdomain( 'affiliatewp-plugin-template', false, $edd_lang_dir );
+		}
+	}
+
+	/**
+	 * Load a .mo file for the old textdomain if one exists.
+	 *
+	 * @see https://github.com/10up/grunt-wp-plugin/issues/21#issuecomment-62003284
+	 */
+	public function load_old_textdomain( $mofile, $textdomain ) {
+
+		// Fallback for old text domain
+		if ( ( 'affiliatewp-plugin-template' === $textdomain ) && ! file_exists( $mofile ) ) {
+			$mofile = dirname( $mofile ) . DIRECTORY_SEPARATOR . str_replace( $textdomain, 'edd', basename( $mofile ) );
+		}
+
+		// Return (possibly overridden) mofile
+		return $mofile;
+	}
 }
+
+// Invoke the checker
+new AffWP_PT_Requirements_Check();
