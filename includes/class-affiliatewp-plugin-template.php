@@ -188,7 +188,10 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 		 * @return void
 		 */
 		private function includes() {
-			//	require_once AFFWP_PT_PLUGIN_DIR . 'includes/file-name.php';
+			// Bring in the autoloader.
+			require_once dirname( __FILE__ ) . '/lib/autoload.php';
+
+			// require_once AFFWP_PT_PLUGIN_DIR . 'includes/file-name.php';
 		}
 
 		/**

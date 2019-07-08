@@ -128,23 +128,19 @@ final class AffWP_PT_Requirements_Check {
 	 */
 	private function load() {
 
-		// Maybe include the bundled bootstrapper.
+		// Load the bundled bootstrapper.
 		if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 			require_once dirname( $this->file ) . '/includes/class-affiliatewp-plugin-template.php';
 		}
 
-		// Maybe hook-in the bootstrapper.
-		if ( class_exists( 'AffiliateWP_Plugin_Template' ) ) {
+		/*
+		 * Bootstrap to plugins_loaded before priority 10 to make sure
+		 * add-ons are loaded after us.
+		 */
+		add_action( 'plugins_loaded', array( $this, 'bootstrap' ), 4 );
 
-			/*
-			 * Bootstrap to plugins_loaded before priority 10 to make sure
-			 * add-ons are loaded after us.
-			 */
-			add_action( 'plugins_loaded', array( $this, 'bootstrap' ), 4 );
-
-			// Register the activation hook.
-			register_activation_hook( $this->file, array( $this, 'install' ) );
-		}
+		// Register the activation hook.
+		register_activation_hook( $this->file, array( $this, 'install' ) );
 	}
 
 	/**
