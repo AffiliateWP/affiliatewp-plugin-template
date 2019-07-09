@@ -26,6 +26,14 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 		private static $instance;
 
 		/**
+		 * Plugin loader file.
+		 *
+		 * @since 1.0.0
+		 * @var   string
+		 */
+		private $file = '';
+
+		/**
 		 * The version number.
 		 *
 		 * @since 1.0.0
@@ -42,20 +50,54 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 		 * @since 1.0
 		 * @static
 		 *
+		 * @param string $file Path to the main plugin file.
 		 * @return \AffiliateWP_Plugin_Template The one true bootstrap instance.
 		 */
-		public static function instance() {
-			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof AffiliateWP_Plugin_Template ) ) {
-
-				self::$instance = new AffiliateWP_Plugin_Template;
-
-				self::$instance->setup_constants();
-				self::$instance->load_textdomain();
-				self::$instance->includes();
-				self::$instance->hooks();
+		public static function instance( $file = '' ) {
+			// Return if already instantiated.
+			if ( self::is_instantiated() ) {
+				return self::$instance;
 			}
 
+			// Setup the singleton.
+			self::setup_instance( $file );
+
+			self::$instance->setup_constants();
+			self::$instance->load_textdomain();
+			self::$instance->includes();
+			self::$instance->hooks();
+
 			return self::$instance;
+		}
+
+		/**
+		 * Setup the singleton instance
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param string $file File path to the main plugin file.
+		 */
+		private static function setup_instance( $file ) {
+			self::$instance       = new AffiliateWP_Plugin_Template;
+			self::$instance->file = $file;
+		}
+
+		/**
+		 * Return whether the main loading class has been instantiated or not.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @return bool True if instantiated. False if not.
+		 */
+		private static function is_instantiated() {
+
+			// Return true if instance is correct class
+			if ( ! empty( self::$instance ) && ( self::$instance instanceof AffiliateWP_Plugin_Template ) ) {
+				return true;
+			}
+
+			// Return false if not instantiated correctly.
+			return false;
 		}
 
 		/**
