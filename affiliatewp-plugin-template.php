@@ -195,7 +195,7 @@ final class AffWP_PT_Requirements_Check {
 	 * @return string Message for a single unmet requirement.
 	 */
 	private function unmet_requirements_description_text() {
-		return esc_html__( 'Requires %s (%s), but (%s) is installed.', 'affiliatewp-plugin-template' );
+		return esc_html__( 'AffiliateWP Plugin Template Requires %1$s (%2$s), but (%3$s) is installed.', 'affiliatewp-plugin-template' );
 	}
 
 	/**
@@ -206,7 +206,7 @@ final class AffWP_PT_Requirements_Check {
 	 * @return string Message for a single missing requirement.
 	 */
 	private function unmet_requirements_missing_text() {
-		return esc_html__( 'Requires %s (%s), but it appears to be missing.', 'affiliatewp-plugin-template' );
+		return esc_html__( 'AffiliateWP Plugin Template Requires %1$s (%2$s), but it appears to be missing.', 'affiliatewp-plugin-template' );
 	}
 
 	/**
@@ -242,7 +242,7 @@ final class AffWP_PT_Requirements_Check {
 		return 'affiliatewp-plugin-template-requirements';
 	}
 
-	/** Agnostic Methods ******************************************************/
+	/* Agnostic Methods ******************************************************/
 
 	/**
 	 * Outputs an additional row in the plugins list table to display messages.
@@ -366,7 +366,7 @@ final class AffWP_PT_Requirements_Check {
 		return $links;
 	}
 
-	/** Checkers **************************************************************/
+	/* Checkers **************************************************************/
 
 	/**
 	 * Runs the actual dependencies checks and compiles the findings.
@@ -440,7 +440,7 @@ final class AffWP_PT_Requirements_Check {
 		return $retval;
 	}
 
-	/** Translations **********************************************************/
+	/* Translations **********************************************************/
 
 	/**
 	 * Loads the plugin textdomain.

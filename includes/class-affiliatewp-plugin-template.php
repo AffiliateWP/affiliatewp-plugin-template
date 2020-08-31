@@ -63,7 +63,6 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 			self::setup_instance( $file );
 
 			self::$instance->setup_constants();
-			self::$instance->load_textdomain();
 			self::$instance->includes();
 			self::$instance->hooks();
 
@@ -161,64 +160,17 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 
 			// Plugin Folder Path.
 			if ( ! defined( 'AFFWP_PT_PLUGIN_DIR' ) ) {
-				define( 'AFFWP_PT_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+				define( 'AFFWP_PT_PLUGIN_DIR', plugin_dir_path( $this->file ) );
 			}
 
 			// Plugin Folder URL.
 			if ( ! defined( 'AFFWP_PT_PLUGIN_URL' ) ) {
-				define( 'AFFWP_PT_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+				define( 'AFFWP_PT_PLUGIN_URL', plugin_dir_url( $this->file ) );
 			}
 
 			// Plugin Root File.
 			if ( ! defined( 'AFFWP_PT_PLUGIN_FILE' ) ) {
-				define( 'AFFWP_PT_PLUGIN_FILE', __FILE__ );
-			}
-		}
-
-		/**
-		 * Loads the add-on language files.
-		 *
-		 * @since 1.0.0
-		 *
-		 * @return void
-		 */
-		public function load_textdomain() {
-
-			// Set filter for plugin's languages directory.
-			$lang_dir = dirname( plugin_basename( __FILE__ ) ) . '/languages/';
-
-			/**
-			 * Filters the languages directory for the add-on.
-			 *
-			 * @since 1.0.0
-			 *
-			 * @param string $lang_dir Language directory.
-			 */
-			$lang_dir = apply_filters( 'affiliatewp_plugin_template_languages_directory', $lang_dir );
-
-			// Traditional WordPress plugin locale filter..
-			$locale = apply_filters( 'plugin_locale',  get_locale(), 'affiliatewp-plugin-template' );
-			$mofile = sprintf( '%1$s-%2$s.mo', 'affiliatewp-plugin-template', $locale );
-
-			// Setup paths to current locale file.
-			$mofile_local  = $lang_dir . $mofile;
-			$mofile_global = WP_LANG_DIR . '/affiliatewp-plugin-template/' . $mofile;
-
-			if ( file_exists( $mofile_global ) ) {
-
-				// Look in global /wp-content/languages/affiliatewp-flag-affiliates/ folder.
-				load_textdomain( 'affiliatewp-plugin-template', $mofile_global );
-
-			} elseif ( file_exists( $mofile_local ) ) {
-
-				// Look in local /wp-content/plugins/affiliatewp-flag-affiliates/languages/ folder.
-				load_textdomain( 'affiliatewp-plugin-template', $mofile_local );
-
-			} else {
-
-				// Load the default language files.
-				load_plugin_textdomain( 'affiliatewp-plugin-template', false, $lang_dir );
-
+				define( 'AFFWP_PT_PLUGIN_FILE', $this->file );
 			}
 		}
 
@@ -231,7 +183,7 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 		 */
 		private function includes() {
 			// Bring in the autoloader.
-			require_once dirname( __FILE__ ) . '/lib/autoload.php';
+			require_once trailingslashit( dirname( $this->file ) ) . 'includes/lib/autoload.php';
 
 			// require_once AFFWP_PT_PLUGIN_DIR . 'includes/file-name.php';
 		}
@@ -260,11 +212,11 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 		 */
 		public function plugin_meta( $links, $file ) {
 
-			if ( $file == plugin_basename( __FILE__ ) ) {
+			if ( $file == plugin_basename( $this->file ) ) {
 
 				$url = admin_url( 'admin.php?page=affiliate-wp-add-ons' );
 
-				$plugins_link = array( '<a alt="' . esc_attr__( 'Get more add-ons for AffiliateWP', 'affiliatewp-flag-affiliates' ) . '" href="' . esc_url( $url ) . '">' . __( 'More add-ons', 'affiliatewp-flag-affiliates' ) . '</a>' );
+				$plugins_link = array( '<a alt="' . esc_attr__( 'Get more add-ons for AffiliateWP', 'affiliatewp-plugin-template' ) . '" href="' . esc_url( $url ) . '">' . __( 'More add-ons', 'affiliatewp-plugin-template' ) . '</a>' );
 
 				$links = array_merge( $links, $plugins_link );
 			}
@@ -295,7 +247,7 @@ function affiliatewp_plugin_template() {
 			require_once 'includes/class-activation.php';
 		}
 
-		$activation = new AffiliateWP_Activation( plugin_dir_path( __FILE__ ), basename( __FILE__ ) );
+		$activation = new AffiliateWP_Activation( plugin_dir_path( $this->file ), basename( $this->file ) );
 		$activation = $activation->run();
 
 	} else {
