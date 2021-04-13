@@ -1,10 +1,28 @@
 <?php
 /**
- * Automatically locates and loads files based on their namespaces and their
- * file names whenever they are instantiated.
+ * AffiliateWP Autoloader
  *
- * @author Drew Jaynes
+ * For use by AffiliateWP and its add-ons. Automatically locates and loads files based on their
+ * namespaces and file names whenever they're instantiated.
+ *
+ * Supports autoloading classes, interfaces, and traits. Class file names must use the "class-" prefix,
+ * interfaces the "interface-" prefix, and traits the "trait-" prefix.
+ *
+ * For traits and interfaces, the fully-qualified name need not include the words "Trait" nor "Interface"
+ * if the namespace includes the words "Traits" or "Interfaces", respectively.
+ *
+ * For example:
+ *  - interface-foo.php: Base\Interfaces\Foo, Interface_Foo, or Foo_Interface
+ *  - trait-bar.php: Base\Traits\Bar, Trait_Bar, or Bar_Trait
+ *
+ * @package     AffiliateWP
+ * @subpackage  Tools
+ * @copyright   Copyright (c) 2021, Sandhills Development, LLC
+ * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
+ * @author      Drew Jaynes
+ * @version     1.0.0
  */
+
 spl_autoload_register( function( $filename ) {
 
 	// First, separate the components of the incoming file.
@@ -13,14 +31,14 @@ spl_autoload_register( function( $filename ) {
 	/*
 	 * - The first index will always be the namespace since it's part of the plugin.
 	 * - All but the last index will be the path to the file.
-	 * - The final index will be the filename. If it doesn't begin with 'I' then it's a class.
+	 * - The final index will be the filename.
 	 */
 
-	// Get the last index of the array. This is the class we're loading.
 	$file_name = '';
 
 	if ( isset( $file_path[ count( $file_path ) - 1 ] ) ) {
 
+		// Get the last index of the array. This is the file we're loading.
 		$file_name = strtolower(
 			$file_path[ count( $file_path ) - 1 ]
 		);
@@ -28,7 +46,7 @@ spl_autoload_register( function( $filename ) {
 		$file_name       = str_ireplace( '_', '-', $file_name );
 		$file_name_parts = explode( '-', $file_name );
 
-		// Use array_search() to handle both Interface_Foo or Foo_Interface.
+		// Use array_search() to handle both Interface|Trait_Foo or Foo_Interface|Trait.
 		$interface_index = array_search( 'interface', $file_name_parts );
 		$trait_index     = array_search( 'trait', $file_name_parts );
 
@@ -61,10 +79,14 @@ spl_autoload_register( function( $filename ) {
 	 * Find the fully qualified path to the class file by iterating through the $file_path array.
 	 * We ignore the first index since it's always the top-level package. The last index is always
 	 * the file so we append that at the end.
+	 *
+	 * Note: This autoloader is intended to live three directories deep from the root: includes/{lib}/affwp
 	 */
 	$fully_qualified_path = trailingslashit(
 		dirname(
-			dirname( __FILE__ )
+			dirname(
+				dirname( __FILE__ )
+			)
 		)
 	);
 
@@ -80,4 +102,5 @@ spl_autoload_register( function( $filename ) {
 	if ( stream_resolve_include_path( $fully_qualified_path ) ) {
 		include_once $fully_qualified_path;
 	}
-});
+
+} );
