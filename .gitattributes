@@ -1,2 +1,9 @@
+# git / github
+/.github/      export-ignore
 .gitattributes export-ignore
-.gitignore export-ignore
+.gitignore     export-ignore
+
+# package / build
+composer.json  export-ignore
+composer.lock  export-ignore
+/vendor/       export-ignore

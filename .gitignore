@@ -22,3 +22,6 @@ $RECYCLE.BIN/
 *.pydevproject
 .project
 .metadata
+
+# Build / Package
+vendor
