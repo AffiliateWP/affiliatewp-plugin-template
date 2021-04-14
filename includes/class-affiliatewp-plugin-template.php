@@ -116,7 +116,7 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 		 */
 		protected function __clone() {
 			// Cloning instances of the class is forbidden.
-			_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'affiliatewp-plugin-template' ), '1.0' );
+			_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh? This object cannot be cloned.', 'affiliatewp-plugin-template' ), '1.0.0' );
 		}
 
 		/**
@@ -128,7 +128,7 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 		 */
 		protected function __wakeup() {
 			// Unserializing instances of the class is forbidden
-			_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'affiliatewp-plugin-template' ), '1.0' );
+			_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh? This class cannot be unserialized.', 'affiliatewp-plugin-template' ), '1.0.0' );
 		}
 
 		/**
@@ -188,9 +188,7 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 		 */
 		private function includes() {
 			// Bring in the autoloader.
-			require_once trailingslashit( dirname( $this->file ) ) . 'includes/lib/autoload.php';
-
-			// require_once AFFWP_PT_PLUGIN_DIR . 'includes/file-name.php';
+			require_once trailingslashit( dirname( $this->file ) ) . 'includes/lib/affwp/autoload.php';
 		}
 
 		/**
@@ -219,11 +217,12 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 
 			if ( $file == plugin_basename( $this->file ) ) {
 
-				$url = admin_url( 'admin.php?page=affiliate-wp-add-ons' );
+				$label = __( 'More add-ons', 'affiliatewp-plugin-template' );
+				$atts  = array( 'title' => __( 'Get more add-ons for AffiliateWP', 'affiliatewp-plugin-template' ) );
 
-				$plugins_link = array( '<a alt="' . esc_attr__( 'Get more add-ons for AffiliateWP', 'affiliatewp-plugin-template' ) . '" href="' . esc_url( $url ) . '">' . __( 'More add-ons', 'affiliatewp-plugin-template' ) . '</a>' );
+				$plugins_link = affwp_admin_link( 'add-ons', $label, array(), $atts );
 
-				$links = array_merge( $links, $plugins_link );
+				$links = array_merge( $links, array( $plugins_link ) );
 			}
 
 			return $links;
@@ -246,20 +245,5 @@ if ( ! class_exists( 'AffiliateWP_Plugin_Template' ) ) {
  * @return \AffiliateWP_Plugin_Template The one true bootstrap instance.
  */
 function affiliatewp_plugin_template() {
-	if ( ! class_exists( 'Affiliate_WP' ) ) {
-
-		if ( ! class_exists( 'AffiliateWP_Activation' ) ) {
-			require_once 'includes/class-activation.php';
-		}
-
-		$activation = new AffiliateWP_Activation( plugin_dir_path( $this->file ), basename( $this->file ) );
-		$activation = $activation->run();
-
-	} else {
-
-		return AffiliateWP_Plugin_Template::instance();
-
-	}
+	return AffiliateWP_Plugin_Template::instance();
 }
-add_action( 'plugins_loaded', 'affiliatewp_plugin_template', 100 );
-
