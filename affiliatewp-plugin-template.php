@@ -20,6 +20,10 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with AffiliateWP. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @package AffiliateWP Plugin Template
+ * @category Core
+ * @version 1.0.0
  */
 
 // Exit if accessed directly
