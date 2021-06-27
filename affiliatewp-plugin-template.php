@@ -102,8 +102,13 @@ class AffiliateWP_PT_Requirements_Check extends AffiliateWP_Requirements_Check {
 		// Maybe hook-in the bootstrapper.
 		if ( class_exists( 'AffiliateWP_Plugin_Template' ) ) {
 
-			// Bootstrap to affwp_plugins_loaded.
-			add_action( 'affwp_plugins_loaded', array( $this, 'bootstrap' ) );
+			$affwp_version = get_option( 'affwp_version' );
+
+			if ( version_compare( $affwp_version, '2.7', '<' ) ) {
+				add_action( 'plugins_loaded', array( $this, 'bootstrap' ), 100 );
+			} else {
+				add_action( 'affwp_plugins_loaded', array( $this, 'bootstrap' ), 100 );
+			}
 
 			// Register the activation hook.
 			register_activation_hook( __FILE__, array( $this, 'install' ) );
